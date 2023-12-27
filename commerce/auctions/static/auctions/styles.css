@@ -1,9 +1,21 @@
 body {
     padding: 10px;
+    background-color: grey;
 }
 
-/* static/css/styles.css */
 .listing-image {
     max-width: 200px;
     height: auto;
+}
+
+nav {
+    font-size: 18px; /* Increase font size */
+    padding: 10px 0; /* Add padding above and below the text */
+    background-color: #f8f9fa; /* Optional: Add a background color */
+}
+
+nav a {
+    padding: 10px 15px; /* Add padding to each link for larger click area */
+    text-decoration: none; /* Optional: Remove underline from links */
+    color: #007bff; /* Optional: Change the text color */
 }
