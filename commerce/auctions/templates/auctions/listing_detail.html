@@ -4,6 +4,53 @@
 <div>
     <h2>{{ listing.title }}</h2>
     <p>{{ listing.description }}</p>
-    <!-- Display other details about the listing -->
+    <p>Current Price: ${{ listing.current_bid }}</p>
+    <!-- Display other details and the image if it exists -->
+    {% if listing.image_url %}
+    <img src="{{ listing.image_url }}" alt="Listing Image" class="listing-image">
+    {% endif %}
+    <!-- Add to watchlist button -->
+    {% if user.is_authenticated %}
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="toggle_watchlist">
+            {% if is_on_watchlist %}
+            Remove from Watchlist
+            {% else %}
+            Add to Watchlist
+            {% endif %}
+        </button>
+    </form>
+    <!-- Bid form -->
+    <form method="post">
+        {% csrf_token %}
+        {{ bid_form.as_p }}
+        <button type="submit" name="place_bid">Place Bid</button>
+    </form>
+    <!-- Close auction button -->
+    {% if user == listing.creator %}
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="close_auction">Close Auction</button>
+    </form>
+    {% endif %}
+    <!-- Display if the user has won the auction -->
+    {% if has_won %}
+    <p>Congratulations! You have won this auction.</p>
+    {% endif %}
+    <!-- Comment form -->
+    <form method="post">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit" name="post_comment">Post Comment</button>
+    </form>
+    {% endif %}
+    <!-- Display comments -->
+    <div>
+        <h3>Comments</h3>
+        {% for comment in comments %}
+        <p>{{ comment.user.username }}: {{ comment.comment_text }}</p>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
