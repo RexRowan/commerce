@@ -2,14 +2,16 @@
 
 {% block body %}
 <h2>Listings in {{ category.name }}</h2>
-<div class="listings">
+<ul>
     {% for listing in listings %}
-    <div class="listing">
+    <li>
+        <!-- Wrap the title in an anchor tag pointing to the listing detail view -->
         <h3><a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a></h3>
-        <!-- Add more details as needed -->
-    </div>
+        <p>{{ listing.description }}</p>
+        <!-- Add more details about the listing here -->
+    </li>
     {% empty %}
-    <p>No listings available in this category.</p>
+    <li>No listings available in this category.</li>
     {% endfor %}
-</div>
+</ul>
 {% endblock %}
