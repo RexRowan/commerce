@@ -7,12 +7,8 @@ class CreateListingForm(forms.ModelForm):
         fields = ['title', 'description', 'starting_bid', 'image_url', 'category']
 
 
-class BidForm(forms.ModelForm):
-    class Meta:
-        model = Bid
-        fields = ['bid_amount']
+class BidForm(forms.Form):
+    bid_amount = forms.DecimalField(max_digits=10, decimal_places=2)
 
-class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['comment_text']
+class CommentForm(forms.Form):
+    comment_text = forms.CharField(widget=forms.Textarea)

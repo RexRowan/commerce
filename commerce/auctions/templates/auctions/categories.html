@@ -5,6 +5,8 @@
 <ul>
     {% for category in categories %}
     <li><a href="{% url 'view_category_listings' category.id %}">{{ category.name }}</a></li>
+    {% empty %}
+    <li>No categories available.</li>
     {% endfor %}
 </ul>
 {% endblock %}
