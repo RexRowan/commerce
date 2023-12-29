@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div>
+    <h2>Closed Auction Listings</h2>
+    {% if closed_listings %}
+        <ul>
+            {% for listing in closed_listings %}
+                <li>
+                    <a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a>
+                    - Final Price: ${{ listing.current_bid }}
+                    {% if request.user == listing.winner %}
+                        - Congratulations, you won this auction!
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No closed auctions at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

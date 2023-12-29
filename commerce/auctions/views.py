@@ -85,6 +85,12 @@ def view_watchlist(request):
     watchlist_items = user.watchlist.all()
     return render(request, "auctions/watchlist.html", {"watchlist_items": watchlist_items})
 
+@login_required
+def closed_listings(request):
+    # Get all closed listings
+    closed_listings = AuctionListing.objects.filter(active=False)
+    return render(request, "auctions/closed_listings.html", {"closed_listings": closed_listings})
+
 def listing_detail(request, listing_id):
     listing = get_object_or_404(AuctionListing, pk=listing_id)
     user = request.user
