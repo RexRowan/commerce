@@ -102,18 +102,28 @@ def listing_detail(request, listing_id):
     if 'place_bid' in request.POST and user.is_authenticated:
         bid_form = BidForm(request.POST)
         if bid_form.is_valid():
-            bid = bid_form.save(commit=False)
-            if bid.bid_amount > listing.current_bid and bid.bid_amount >= listing.starting_bid:
-                bid.user = user
-                bid.listing = listing
+            bid_amount = bid_form.cleaned_data['bid_amount']
+            current_highest_bid = listing.current_bid if listing.current_bid else listing.starting_bid
+            if bid_amount > current_highest_bid:
+                # The bid is valid, create and save the bid
+                bid = Bid(user=user, listing=listing, bid_amount=bid_amount)
                 bid.save()
-                listing.current_bid = bid.bid_amount
+                listing.current_bid = bid_amount
                 listing.save()
                 # Redirect to avoid resubmitting the form
                 return HttpResponseRedirect(reverse('listing_detail', args=[listing_id]))
             else:
-                # Handle error: bid not high enough
-                bid_form.add_error('bid_amount', 'Bid must be higher than current bid.')
+                # The bid is not high enough, add an error to the form
+                bid_form.add_error('bid_amount', 'Bid must be higher than current bid and at least as high as the starting bid.')
+        
+        # If the form is not valid or the bid is not high enough, re-render the page with the form errors
+        comment_form = CommentForm()  # Initialize an empty comment form
+        return render(request, "auctions/listing_detail.html", {
+            "listing": listing,
+            "bid_form": bid_form,
+            "comment_form": comment_form,
+            # Include other context variables as needed
+        })
 
     # Handle closing the auction
     if 'close_auction' in request.POST and user.is_authenticated and listing.creator == user:
@@ -126,9 +136,8 @@ def listing_detail(request, listing_id):
     if 'post_comment' in request.POST and user.is_authenticated:
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
-            comment.user = user
-            comment.listing = listing
+            comment_text = comment_form.cleaned_data['comment_text']
+            comment = Comment(user=user, listing=listing, comment_text=comment_text)
             comment.save()
             # Redirect to avoid resubmitting the form
             return HttpResponseRedirect(reverse('listing_detail', args=[listing_id]))

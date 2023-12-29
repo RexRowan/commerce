@@ -9,8 +9,18 @@
     {% if listing.image_url %}
     <img src="{{ listing.image_url }}" alt="Listing Image" class="listing-image">
     {% endif %}
+    
+    <!-- Display if the auction is closed and the user has won the auction -->
+    {% if not listing.active %}
+        {% if has_won %}
+        <p>Congratulations! You have won this auction.</p>
+        {% else %}
+        <p>This auction has ended.</p>
+        {% endif %}
+    {% endif %}
+
     <!-- Add to watchlist button -->
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and listing.active %}
     <form method="post">
         {% csrf_token %}
         <button type="submit" name="toggle_watchlist">
@@ -21,30 +31,34 @@
             {% endif %}
         </button>
     </form>
+    {% endif %}
+
     <!-- Bid form -->
+    {% if user.is_authenticated and listing.active %}
     <form method="post">
         {% csrf_token %}
         {{ bid_form.as_p }}
         <button type="submit" name="place_bid">Place Bid</button>
     </form>
+    {% endif %}
+
     <!-- Close auction button -->
-    {% if user == listing.creator %}
+    {% if user.is_authenticated and user == listing.creator and listing.active %}
     <form method="post">
         {% csrf_token %}
         <button type="submit" name="close_auction">Close Auction</button>
     </form>
     {% endif %}
-    <!-- Display if the user has won the auction -->
-    {% if has_won %}
-    <p>Congratulations! You have won this auction.</p>
-    {% endif %}
+
     <!-- Comment form -->
+    {% if user.is_authenticated %}
     <form method="post">
         {% csrf_token %}
         {{ comment_form.as_p }}
         <button type="submit" name="post_comment">Post Comment</button>
     </form>
     {% endif %}
+
     <!-- Display comments -->
     <div>
         <h3>Comments</h3>
